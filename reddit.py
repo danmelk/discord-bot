@@ -15,14 +15,15 @@ def auth():
     return reddit
 
 def data(subreddit_name):
-
     reddit = auth()
     subreddit = reddit.subreddit(subreddit_name)
     message = ""
+    msg_dict = {}
 
     for submission in subreddit.hot(limit=5):
         entry = f'{submission.url}\n'
         message += entry
+        
 
     return message
 
