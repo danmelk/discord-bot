@@ -37,7 +37,7 @@ async def on_reaction_add(reaction, user):
 
     elif emoji == "\N{shower}":
         submission_data = data('ShowerThoughts')
-        await reaction.channel.send(submission_data)
+        await user.send(submission_data)
     elif emoji == "\N{Smiling Cat Face with Heart-Shaped Eyes}":
         submission_data = data('Aww')
         await user.send(submission_data)
