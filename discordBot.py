@@ -36,17 +36,21 @@ async def on_reaction_add(reaction, user):
         return
 
     elif emoji == "\N{shower}":
-        submission_data = data('ShowerThoughts')
+        submission_data = await data('ShowerThoughts')
         await user.send(submission_data)
+
     elif emoji == "\N{Smiling Cat Face with Heart-Shaped Eyes}":
-        submission_data = data('Aww')
+        submission_data = await data('Aww')
         await user.send(submission_data)
+        
     elif emoji == "\N{Upwards Black Arrow}":
-        submission_data = data('GetMotivated')
+        submission_data = await data('GetMotivated')
         await user.send(submission_data)
+
     elif emoji == "\N{Test tube}":
-        submission_data = data('Homelab')
+        submission_data = await data('Homelab')
         await user.send(submission_data)
+        
     else:
         return 
 
