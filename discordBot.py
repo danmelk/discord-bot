@@ -47,13 +47,12 @@ async def on_reaction_add(reaction, user):
 
     else:
         if emoji in emoji_to_subreddit.keys():
-            submission_data = await data(emoji_to_subreddit[emoji])
             await user.send('Data fetching has started. Please wait...')
+            submission_data = await data(emoji_to_subreddit[emoji])
             await embed(user, submission_data)
         
 async def embed(user, submission_data):
-    body_lenght = len(submission_data['body'])
-    if body_lenght >= 3500:
+    if len(submission_data['body']) >= 3500:
         description = f"{submission_data['body'][0:3500]}\n [Read full post...](https://www.reddit.com{submission_data['url']})"
         embed = discord.Embed(
             title = submission_data['title'],
@@ -61,6 +60,7 @@ async def embed(user, submission_data):
             description = description,
             color = 0xFF5733,
         )
+
     else:
         description = f"{submission_data['body']}\n [Read full post...](https://www.reddit.com{submission_data['url']})"
         embed = discord.Embed(
@@ -69,19 +69,23 @@ async def embed(user, submission_data):
             description = submission_data['body'],
             color = 0xFF5733,
         )   
+
     embed.set_author(
         name = f"/r/{submission_data['subreddit']}",
         url = f"https://www.reddit.com/r/{submission_data['subreddit']}",
         icon_url = submission_data['subreddit'].icon_img
     )
+
     if submission_data['is_self']:
         embed.set_thumbnail(
             url = submission_data['subreddit'].icon_img
-        ) 
+        )
+
     else:
         embed.set_thumbnail(
             url = submission_data['media']
         )
+        
     await user.send(embed = embed)
 
 
