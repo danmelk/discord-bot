@@ -1,8 +1,4 @@
 import asyncio
-import datetime
-from cProfile import run
-from turtle import title
-from urllib.request import ProxyBasicAuthHandler
 import asyncpraw
 from dotenv import load_dotenv
 import os
@@ -19,12 +15,13 @@ async def auth():
 
 async def data(subreddit_name):
     reddit = await auth()
-    subreddit = await reddit.subreddit(subreddit_name)
+    subreddit = await reddit.subreddit(subreddit_name, fetch=True)
     submission = await subreddit.random()
-    print(submission.permalink)
-    data = [submission.permalink, submission.url, submission.title, submission.score, submission.author, submission.num_comments, submission.is_self]
-    titles = ['url', 'media', 'title', 'score', 'author', 'num_comments', 'is_self']
+    # print(submission.permalink)
+    data = [subreddit, submission.permalink, submission.url, submission.title, submission.selftext, submission.score, submission.author, submission.num_comments, submission.is_self]
+    titles = ['subreddit', 'url', 'media', 'title', 'body', 'score', 'author', 'num_comments', 'is_self']
     result = dict(zip(titles, data))
+    # print(result)
     return result 
 
         
