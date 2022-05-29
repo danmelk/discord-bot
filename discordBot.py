@@ -48,10 +48,9 @@ async def on_reaction_add(reaction, user):
     else:
         if emoji in emoji_to_subreddit.keys():
             submission_data = await data(emoji_to_subreddit[emoji])
+            await user.send('Data fetching has started. Please wait...')
             await embed(user, submission_data)
         
-
-
 async def embed(user, submission_data):
     body_lenght = len(submission_data['body'])
     if body_lenght >= 3500:
