@@ -34,31 +34,22 @@ async def on_message(message):
 @client.event
 async def on_reaction_add(reaction, user):
     emoji = reaction.emoji
+
+    emoji_to_subreddit = {
+        "\N{shower}" : "ShowerThoughts",
+        "\N{Smiling Cat Face with Heart-Shaped Eyes}" : "Aww",
+        "\N{Upwards Black Arrow}" : "GetMotivated",
+        "\N{Test tube}" : "Homelab"
+    }
+
     if user.bot:
         return
 
-    elif emoji == "\N{shower}":
-        subreddit = 'ShowerThoughts'
-        submission_data = await data(subreddit)
-        await embed(user, submission_data)
-
-    elif emoji == "\N{Smiling Cat Face with Heart-Shaped Eyes}":
-        subreddit = 'Aww'
-        submission_data = await data(subreddit)
-        await embed(user, submission_data)
-        
-    elif emoji == "\N{Upwards Black Arrow}":
-        subreddit = 'GetMotivated'
-        submission_data = await data(subreddit)
-        await embed(user, submission_data)
-
-    elif emoji == "\N{Test tube}":
-        subreddit = 'Homelab'
-        submission_data = await data(subreddit)
-        await embed(user, submission_data)
-        
     else:
-        return 
+        if emoji in emoji_to_subreddit.keys():
+            submission_data = await data(emoji_to_subreddit[emoji])
+            await embed(user, submission_data)
+        
 
 
 async def embed(user, submission_data):
