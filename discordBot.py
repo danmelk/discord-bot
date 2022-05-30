@@ -47,7 +47,6 @@ async def on_reaction_add(reaction, user):
 
     else:
         if emoji in emoji_to_subreddit.keys():
-            await user.send('Data fetching has started. Please wait...')
             submission_data = await data(emoji_to_subreddit[emoji])
             await embed(user, submission_data)
         
