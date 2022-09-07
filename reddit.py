@@ -20,6 +20,7 @@ async def data(subreddit_name):
     data = [subreddit, submission.permalink, submission.url, submission.title, submission.selftext, submission.score, submission.author, submission.num_comments, submission.is_self]
     titles = ['subreddit', 'url', 'media', 'title', 'body', 'score', 'author', 'num_comments', 'is_self']
     result = dict(zip(titles, data))
+    await reddit.close()
     return result 
 
         
