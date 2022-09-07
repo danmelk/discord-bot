@@ -1,6 +1,3 @@
-from dataclasses import dataclass
-from operator import sub
-from turtle import color, title
 import discord
 import os
 from discord.ext import commands
@@ -21,13 +18,17 @@ async def on_ready():
 
 @client.listen('on_message')
 async def on_message(message):
+
+    if message.author == client.user:
+        return
+
     if message.content.startswith(client.user.mention):
 
         id = message.channel.id
 
         global channel
         channel = client.get_channel(id)
-        bot_response = await channel.send(f'Reddit request from {message.author.mention}!')
+
         emojis = [
         '\N{shower}',
         '\N{Smiling Cat Face with Heart-Shaped Eyes}',
@@ -35,7 +36,7 @@ async def on_message(message):
         '\N{Test tube}'
         ]
         for emoji in emojis:
-            await bot_response.add_reaction(emoji)
+            await message.add_reaction(emoji)
 
 @client.event
 async def on_reaction_add(reaction, user):
@@ -54,9 +55,9 @@ async def on_reaction_add(reaction, user):
     else:
         if emoji in emoji_to_subreddit.keys():
             submission_data = await data(emoji_to_subreddit[emoji])
-            await embed(user, submission_data)
+            await embed(submission_data)
         
-async def embed(user, submission_data):
+async def embed(submission_data):
     if len(submission_data['body']) >= 3500:
         description = f"{submission_data['body'][0:3500]}\n [Read full post...](https://www.reddit.com{submission_data['url']})"
         embed = discord.Embed(
