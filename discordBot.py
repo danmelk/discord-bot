@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from operator import sub
 from turtle import color, title
 import discord
@@ -9,7 +10,7 @@ load_dotenv()
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 
-activity = discord.Activity(name="at Deathbringer's Will", type=discord.ActivityType.watching)
+activity = discord.Activity(name="hentai", type=discord.ActivityType.watching)
 
 client = commands.Bot(command_prefix='$', activity = activity)
 
@@ -21,7 +22,12 @@ async def on_ready():
 @client.listen('on_message')
 async def on_message(message):
     if message.content.startswith(client.user.mention):
-        bot_response = await message.reply(f'Reddit request from {message.author.mention}!')
+
+        id = message.channel.id
+
+        global channel
+        channel = client.get_channel(id)
+        bot_response = await channel.send(f'Reddit request from {message.author.mention}!')
         emojis = [
         '\N{shower}',
         '\N{Smiling Cat Face with Heart-Shaped Eyes}',
@@ -85,7 +91,7 @@ async def embed(user, submission_data):
             url = submission_data['media']
         )
         
-    await user.send(embed = embed)
+    await channel.send(embed = embed)
 
 
 client.run(TOKEN)
