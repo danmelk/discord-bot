@@ -1,3 +1,4 @@
+from unittest import async_case
 import discord
 import os
 from discord.ext import commands
@@ -23,12 +24,6 @@ async def on_message(message):
         return
 
     if message.content.startswith(client.user.mention):
-
-        id = message.channel.id
-
-        global channel
-        channel = client.get_channel(id)
-
         emojis = [
         '\N{shower}',
         '\N{Smiling Cat Face with Heart-Shaped Eyes}',
@@ -42,22 +37,23 @@ async def on_message(message):
 async def on_reaction_add(reaction, user):
     emoji = reaction.emoji
 
+    if user.bot:
+        return
+
     emoji_to_subreddit = {
         "\N{shower}" : "ShowerThoughts",
         "\N{Smiling Cat Face with Heart-Shaped Eyes}" : "Aww",
         "\N{Upwards Black Arrow}" : "GetMotivated",
         "\N{Test tube}" : "Homelab"
     }
+    if emoji in emoji_to_subreddit.keys():
+        submission_data = await data(emoji_to_subreddit[emoji])
+        channel_id = reaction.message.channel.id   
+        channel = client.get_channel(channel_id) 
+        await embed(submission_data, channel)
 
-    if user.bot:
-        return
-
-    else:
-        if emoji in emoji_to_subreddit.keys():
-            submission_data = await data(emoji_to_subreddit[emoji])
-            await embed(submission_data)
-        
-async def embed(submission_data):
+       
+async def embed(submission_data, channel_id):
     if len(submission_data['body']) >= 3500:
         description = f"{submission_data['body'][0:3500]}\n [Read full post...](https://www.reddit.com{submission_data['url']})"
         embed = discord.Embed(
@@ -92,7 +88,7 @@ async def embed(submission_data):
             url = submission_data['media']
         )
         
-    await channel.send(embed = embed)
+    await channel_id.send(embed = embed)
 
 
 client.run(TOKEN)
