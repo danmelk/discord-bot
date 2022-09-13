@@ -6,24 +6,22 @@ from dotenv import load_dotenv
 from reddit import data
 load_dotenv()
 
-TOKEN = os.getenv("DISCORD_TOKEN")
-
 activity = discord.Activity(name="hentai", type=discord.ActivityType.watching)
 
-client = commands.Bot(command_prefix='$', activity = activity)
+bot = commands.Bot(command_prefix='$', activity = activity)
 
-@client.event
+@bot.event
 async def on_ready():
-    print(f'Logged in as {client.user} (ID: {client.user.id})')
+    print(f'Logged in as {bot.user} (ID: {bot.user.id})')
     print('------')
 
-@client.listen('on_message')
+@bot.listen('on_message')
 async def on_message(message):
 
-    if message.author == client.user:
+    if message.author == bot.user:
         return
 
-    if message.content.startswith(client.user.mention):
+    if message.content.startswith(bot.user.mention):
         emojis = [
         '\N{shower}',
         '\N{Smiling Cat Face with Heart-Shaped Eyes}',
@@ -33,7 +31,7 @@ async def on_message(message):
         for emoji in emojis:
             await message.add_reaction(emoji)
 
-@client.event
+@bot.event
 async def on_reaction_add(reaction, user):
     emoji = reaction.emoji
 
@@ -48,11 +46,10 @@ async def on_reaction_add(reaction, user):
     }
     if emoji in emoji_to_subreddit.keys():
         submission_data = await data(emoji_to_subreddit[emoji])
-        channel_id = reaction.message.channel.id   
-        channel = client.get_channel(channel_id) 
+        channel_id = reaction.message.channel.id
+        channel = bot.get_channel(int(channel_id)) 
         await embed(submission_data, channel)
 
-       
 async def embed(submission_data, channel_id):
     if len(submission_data['body']) >= 3500:
         description = f"{submission_data['body'][0:3500]}\n [Read full post...](https://www.reddit.com{submission_data['url']})"
@@ -91,4 +88,4 @@ async def embed(submission_data, channel_id):
     await channel_id.send(embed = embed)
 
 
-client.run(TOKEN)
+bot.run(os.getenv("DISCORD_TOKEN"))
