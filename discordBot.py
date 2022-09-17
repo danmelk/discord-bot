@@ -1,4 +1,5 @@
-from unittest import async_case
+from unicodedata import name
+from discord.utils import get
 import discord
 import os
 from discord.ext import commands
@@ -46,13 +47,20 @@ async def on_reaction_add(reaction, user):
     }
     if emoji in emoji_to_subreddit.keys():
         submission_data = await data(emoji_to_subreddit[emoji])
-        channel_id = reaction.message.channel.id
-        channel = bot.get_channel(int(channel_id)) 
-        await embed(submission_data, channel)
+        guildId = reaction.message.guild.id
+        guild = bot.get_guild(int(guildId)) 
+        channel_name = f'{emoji} - {emoji_to_subreddit.get(emoji)}'
 
-async def embed(submission_data, channel_id):
-    if len(submission_data['body']) >= 3500:
-        description = f"{submission_data['body'][0:3500]}\n [Read full post...](https://www.reddit.com{submission_data['url']})"
+        categoryID = discord.utils.get(reaction.message.guild.categories, id=1020345954810990703) 
+
+        exists = discord.utils.get(reaction.message.guild.text_channels, name = channel_name)
+        if not exists:
+            channel = await guild.create_text_channel(name = channel_name, category=categoryID)
+            await embed(submission_data, channel)
+
+async def embed(submission_data, channel):
+    if len(submission_data['body']) >= 1500:
+        description = f"{submission_data['body'][0:1500]}\n [Read full post...](https://www.reddit.com{submission_data['url']})"
         embed = discord.Embed(
             title = submission_data['title'],
             url = f"https://www.reddit.com{submission_data['url']}",
@@ -85,7 +93,7 @@ async def embed(submission_data, channel_id):
             url = submission_data['media']
         )
         
-    await channel_id.send(embed = embed)
+    await channel.send(embed = embed)
 
 
 bot.run(os.getenv("DISCORD_TOKEN"))
