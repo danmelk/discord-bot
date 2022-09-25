@@ -1,4 +1,3 @@
-from contextlib import redirect_stderr
 import asyncpraw
 from dotenv import load_dotenv
 import os
