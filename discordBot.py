@@ -1,3 +1,4 @@
+from dis import disco
 from string import printable
 from unicodedata import name
 from discord.utils import get
@@ -11,6 +12,13 @@ load_dotenv()
 activity = discord.Activity(name="hentai", type=discord.ActivityType.watching)
 
 bot = commands.Bot(command_prefix='$', activity = activity)
+
+emoji_to_subreddit = {
+        "\N{shower}" : "ShowerThoughts",
+        "\N{Smiling Cat Face with Heart-Shaped Eyes}" : "Aww",
+        "\N{Upwards Black Arrow}" : "GetMotivated",
+        "\N{Test tube}" : "Homelab"
+    }
 
 @bot.event
 async def on_ready():
@@ -40,30 +48,42 @@ async def on_reaction_add(reaction, user):
     if user.bot:
         return
 
-    emoji_to_subreddit = {
-        "\N{shower}" : "ShowerThoughts",
-        "\N{Smiling Cat Face with Heart-Shaped Eyes}" : "Aww",
-        "\N{Upwards Black Arrow}" : "GetMotivated",
-        "\N{Test tube}" : "Homelab"
-    }
     if emoji in emoji_to_subreddit.keys():
-        submission_data = await data(emoji_to_subreddit[emoji])
+        
+        channel_name = f'{emoji}-{emoji_to_subreddit.get(emoji).lower()}'
+        
+        category = discord.utils.get(reaction.message.guild.categories, name = "Reddit")
+        channel = discord.utils.get(reaction.message.guild.text_channels, name = channel_name)        
 
-        guildId = reaction.message.guild.id
-        guild = bot.get_guild(int(guildId)) 
-        channel_name = f'{emoji}-{emoji_to_subreddit.get(emoji)}'
-        categoryID = discord.utils.get(reaction.message.guild.categories, id=1020345954810990703) 
+        if category is None:
 
-        print(channel_name)
-        exists = discord.utils.get(bot.get_all_channels(), guild__id = guildId, name = channel_name)
-        print(exists)
+            new_category = await reaction.message.guild.create_category("Reddit")
+        
+            if channel is None:
 
-        if not exists:
-            channel = await guild.create_text_channel(name = channel_name, category=categoryID)
-            await embed(submission_data, channel)
+                new_channel = await reaction.message.guild.create_text_channel(channel_name, category = new_category)
+                
+                submission_data = await data(emoji_to_subreddit[emoji])
+                await embed(submission_data, new_channel)
+            
+            else:
+                
+                submission_data = await data(emoji_to_subreddit[emoji])
+                await embed(submission_data, channel)
 
-        if exists:
-            await embed(submission_data, channel_name)
+        else:
+
+            if channel is None:
+
+                submission_data = await data(emoji_to_subreddit[emoji])
+                new_channel = await reaction.message.guild.create_text_channel(channel_name, category = category)
+                await embed(submission_data, new_channel)
+
+            else:
+                
+                submission_data = await data(emoji_to_subreddit[emoji])
+                await embed(submission_data, channel)
+
 
 async def embed(submission_data, channel):
     if len(submission_data['body']) >= 1500:
@@ -99,7 +119,7 @@ async def embed(submission_data, channel):
         embed.set_thumbnail(
             url = submission_data['media']
         )
-        
+
     await channel.send(embed = embed)
 
 
