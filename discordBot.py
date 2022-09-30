@@ -1,6 +1,3 @@
-from dis import disco
-from string import printable
-from unicodedata import name
 from discord.utils import get
 import discord
 import os
@@ -30,16 +27,23 @@ async def on_message(message):
 
     if message.author == bot.user:
         return
-
+       
     if message.content.startswith(bot.user.mention):
-        emojis = [
-        '\N{shower}',
-        '\N{Smiling Cat Face with Heart-Shaped Eyes}',
-        '\N{Upwards Black Arrow}',
-        '\N{Test tube}'
-        ]
-        for emoji in emojis:
-            await message.add_reaction(emoji)
+        
+        if isinstance(message.channel, discord.channel.DMChannel):
+            await message.channel.send("Dont DM me prick")
+            return 
+
+        else:
+            emojis = [
+            '\N{shower}',
+            '\N{Smiling Cat Face with Heart-Shaped Eyes}',
+            '\N{Upwards Black Arrow}',
+            '\N{Test tube}'
+            ]
+
+            for emoji in emojis:
+                await message.add_reaction(emoji)
 
 @bot.event
 async def on_reaction_add(reaction, user):
