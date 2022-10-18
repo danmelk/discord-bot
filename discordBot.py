@@ -1,9 +1,10 @@
-from discord.utils import get
 import discord
 import os
 from discord.ext import commands
 from dotenv import load_dotenv
 from reddit import data
+
+
 load_dotenv()
 
 activity = discord.Activity(name="hentai", type=discord.ActivityType.watching)

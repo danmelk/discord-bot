@@ -26,5 +26,3 @@ async def data(subreddit_name):
     print(url)
     result = dict(zip(titles, data))
     return result 
-
-        
